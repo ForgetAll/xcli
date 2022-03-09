@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/ForgetAll/xcli/cmd"
 
 func main() {
-	fmt.Println("Hello World")
+	_ = cmd.Execute()
 }
