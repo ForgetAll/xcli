@@ -1,1 +1,1 @@
-构建属于自己的命令行工具
+use cobra to build self command line tool
