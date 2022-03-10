@@ -1,0 +1,25 @@
+name: XCli task
+on:
+  push:
+  pull_request:
+
+env:
+  GO111MODULE: on
+
+jobs:
+  pre-build-job:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
+
+      - uses: actions/checkout@v2
+
+      - uses: golangci/golangci-lint-action@v2
+        with:
+          version: 'v1.42.1'
+          args: --verbose
+      - run:
+          make test
