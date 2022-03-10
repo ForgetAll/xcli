@@ -25,7 +25,7 @@ var uuidCmd = &cobra.Command{
 	Long:  `generate uuid string`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !checkParam() {
-			cmd.Println("param error")
+			cmd.Println(NormalParamErrorHint)
 			return
 		}
 
