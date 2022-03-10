@@ -6,8 +6,10 @@ go get -u github.com/ForgetAll/xcli
 ```
 
 uuid:
-    * xcli uuid: generate uuid
-    * xcli uuid -t/--trim: generate uuid without '-' char
+
+* xcli uuid: generate uuid
+* xcli uuid -t/--trim: generate uuid without '-' char
+    
 
 ### Contribution
 Welcome to discuss or commit pull request!
