@@ -7,9 +7,10 @@ const (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "xcli",
-	Short: "A generator for xcli based applications",
-	Long:  "A generator for xcli based applications",
+	Use:     "xcli",
+	Short:   "A generator for xcli based applications",
+	Long:    "A generator for xcli based applications",
+	Version: version,
 }
 
 func Execute() error {
