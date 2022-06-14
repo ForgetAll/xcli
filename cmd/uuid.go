@@ -24,6 +24,10 @@ var uuidCmd = &cobra.Command{
 	Short: "generate uuid string",
 	Long:  `generate uuid string`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if *isTrim && count > 32 {
+			count = 32
+		}
+
 		if !checkParam() {
 			cmd.Println(NormalParamErrorHint)
 			return
@@ -59,5 +63,9 @@ func handleUID(uid string) string {
 func init() {
 	rootCmd.AddCommand(uuidCmd)
 	isTrim = uuidCmd.PersistentFlags().BoolP("trim", "t", false, "trim uuid '-' char")
-	uuidCmd.PersistentFlags().Int8VarP(&count, "count", "c", UUIDLength, "return count length uuid")
+	defaultLength := UUIDLength
+	if *isTrim {
+		defaultLength = UUIDTrim
+	}
+	uuidCmd.PersistentFlags().Int8VarP(&count, "count", "c", int8(defaultLength), "return count length uuid")
 }

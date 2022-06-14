@@ -51,7 +51,7 @@ linters:
 
 linters-settings:
   govet:
-    check-shadowing: true
+    check-shadowing: false
   whitespace:
     multi-func: true
   lll:

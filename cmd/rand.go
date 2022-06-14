@@ -16,7 +16,7 @@ var (
 	realRand *bool
 )
 
-// randCmd represents the uuid command
+// randCmd represents the rand command
 var randCmd = &cobra.Command{
 	Use:   "rand",
 	Short: "get a random number",
