@@ -21,10 +21,13 @@ import (
 var (
 	path string
 
-	code       chan int
-	saveSingle chan bool
-	CodeExit   = 1
-	CodeNext   = 2
+	code        chan int
+	saveSingle  chan bool
+	CodeExit    = 1
+	CodeNext    = 2
+	CodeBoss    = 3
+	CodeBossEnd = 4
+	MaxLenLine  = 20
 )
 
 // readCmd represents the read command
@@ -130,25 +133,42 @@ var readCmd = &cobra.Command{
 		saveSingle = make(chan bool)
 		go keyEventListen()
 		var next bool
+		// one line can not show full text, split it to multi line
+		var nextDetail bool
+		var runeText []rune
+		detailCount := 1
+		var hasGone bool
+		var bossMode bool
 		exit := false
 		fileScanner := bufio.NewScanner(f)
 		var count int64 = 1
 		go autoSaveReadLog(&lineCount, currentBook.ID)
 		for fileScanner.Scan() {
+			// go to last read line
 			if lineCount >= count {
 				count++
 				continue
 			} else {
-				next = true
+				if !hasGone {
+					hasGone = true
+					next = true
+				}
 			}
 
 			if exit {
 				break
 			}
 
-			if next {
-				fmt.Println(fileScanner.Text())
-				saveSingle <- true
+			if next && !bossMode {
+				runeText = []rune(fileScanner.Text())
+				if len(runeText) < MaxLenLine {
+					fmt.Println(fileScanner.Text())
+					saveSingle <- true
+				} else {
+					nextDetail = true
+					detailCount = 1
+					fmt.Println(string(runeText[:MaxLenLine]))
+				}
 				// nolint
 				next = false
 			}
@@ -158,10 +178,34 @@ var readCmd = &cobra.Command{
 			case CodeExit:
 				exit = true
 			case CodeNext:
-				// nolint
-				next = true
-				lineCount++
-				count++
+				if bossMode {
+					continue
+				}
+				if !nextDetail {
+					// nolint
+					next = true
+					lineCount++
+					count++
+					break
+				}
+
+				if len(runeText) < (detailCount+1)*MaxLenLine {
+					fmt.Println(string(runeText[detailCount*MaxLenLine:]))
+					next = true
+					nextDetail = false
+					detailCount = 1
+					break
+				}
+
+				detailCount++
+				fmt.Println(string(runeText[(detailCount-1)*MaxLenLine : detailCount*MaxLenLine]))
+			case CodeBoss:
+				for i := 0; i < 100; i++ {
+					fmt.Println()
+				}
+				bossMode = true
+			case CodeBossEnd:
+				bossMode = false
 			default:
 				continue
 			}
@@ -188,6 +232,14 @@ func keyEventListen() {
 
 	hook.Register(hook.KeyDown, []string{"j"}, func(e hook.Event) {
 		code <- CodeNext
+	})
+
+	hook.Register(hook.KeyDown, []string{"u"}, func(e hook.Event) {
+		code <- CodeBoss
+	})
+
+	hook.Register(hook.KeyDown, []string{"i"}, func(e hook.Event) {
+		code <- CodeBossEnd
 	})
 
 	s := hook.Start()
