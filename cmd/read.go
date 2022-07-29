@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"context"
 	"crypto/md5"
-	"database/sql"
+	osql "database/sql"
 	"fmt"
 	"io"
 	"io/fs"
@@ -333,7 +333,7 @@ func updateBooks(ctx context.Context, path string) error {
 
 func addNewBooks(ctx context.Context, books []*model.Book) error {
 	var bldb model.BookListDatabase
-	tx, err := model.DbConn.BeginTx(ctx, &sql.TxOptions{
+	tx, err := model.DbConn.BeginTx(ctx, &osql.TxOptions{
 		ReadOnly: false,
 	})
 	if err != nil {
@@ -354,7 +354,7 @@ func addNewBooks(ctx context.Context, books []*model.Book) error {
 
 func updateBookInfo(ctx context.Context, books []*model.Book) error {
 	var bldb model.BookListDatabase
-	tx, err := model.DbConn.BeginTx(ctx, &sql.TxOptions{
+	tx, err := model.DbConn.BeginTx(ctx, &osql.TxOptions{
 		ReadOnly: false,
 	})
 	if err != nil {

@@ -240,6 +240,10 @@ func generateCodeByProto(protoFile string) (string, error) {
 			continue
 		}
 
+		if startRecord && strings.Contains(currentLine, "}") {
+			return code, nil
+		}
+
 		if !startRecord && strings.Contains(currentLine, "service") {
 			startRecord = true
 			currentLine = ""
